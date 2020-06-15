@@ -1,4 +1,4 @@
-# Azure-LogicApp-FileShare-Sync
+# Azure-LogicApp-FileShares-Sync
 How to copy folder/files from one file-share to another (might be behind a VNet) using Logic App
 
 ![alt text](https://github.com/pazinio/Azure-LogicApp-FileShares-Sync/blob/master/logic-app-designer.png?raw=true)
