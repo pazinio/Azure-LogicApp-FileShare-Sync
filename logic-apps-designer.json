@@ -1,0 +1,120 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Create_file": {
+                        "inputs": {
+                            "body": "@body('Get_file_content')",
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azurefile_4']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/datasets/default/files",
+                            "queries": {
+                                "folderPath": "/sample",
+                                "name": "@items('For_each')?['Name']",
+                                "queryParametersSingleEncoded": true
+                            }
+                        },
+                        "runAfter": {
+                            "Get_file_content": [
+                                "Succeeded"
+                            ]
+                        },
+                        "runtimeConfiguration": {
+                            "contentTransfer": {
+                                "transferMode": "Chunked"
+                            }
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Get_file_content": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azurefile']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent(items('For_each')?['Path']))}/content",
+                            "queries": {
+                                "inferContentType": false
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('List_files')?['value']",
+                "runAfter": {
+                    "List_files": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "List_files": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azurefile_1']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/foldersV2/@{encodeURIComponent(encodeURIComponent('JTJmdGVzdA=='))}",
+                    "queries": {
+                        "nextPageMarker": "",
+                        "useFlatListing": false
+                    }
+                },
+                "metadata": {
+                    "JTJmdGVzdA==": "/test"
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {}
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azurefile": {
+                    "connectionId": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/resourceGroups/rambam-test/providers/Microsoft.Web/connections/azurefile-5",
+                    "connectionName": "azurefile-5",
+                    "id": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/resourceGroups/rambam-test/providers/Microsoft.Logic/integrationServiceEnvironments/ise/managedApis/azurefile"
+                },
+                "azurefile_1": {
+                    "connectionId": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/resourceGroups/rambam-test/providers/Microsoft.Web/connections/azurefile-3",
+                    "connectionName": "azurefile-3",
+                    "id": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/providers/Microsoft.Web/locations/westeurope/managedApis/azurefile"
+                },
+                "azurefile_4": {
+                    "connectionId": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/resourceGroups/rambam-test/providers/Microsoft.Web/connections/azurefile-6",
+                    "connectionName": "azurefile-6",
+                    "id": "/subscriptions/fbee2e7f-c98b-46bd-846e-7e72b0e1ea0a/resourceGroups/rambam-test/providers/Microsoft.Logic/integrationServiceEnvironments/ise/managedApis/azurefile"
+                }
+            }
+        }
+    }
+}
